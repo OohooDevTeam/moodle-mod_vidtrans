@@ -1,0 +1,12 @@
+Plugin: Video Translator
+
+Translates the subtitles of a video into one of the 6 preselected languages and
+plays the video with those translated subtitles.
+
+Prerequisites: Install ffmpeg on the server.
+
+Installation: Move the contents of this folder to
+ 
+/your_moodle_install/mod/vidtrans/
+
+Refer to the PDF documentation for more information: http://oohoo.biz
