@@ -39,7 +39,7 @@ if (key_exists('vidfile', $_FILES)) {
 
     if (!strstr($_FILES['vidfile']['type'], 'video') && !strstr($_FILES['vidfile']['type'], 'audio')) {
         $no_redirect = true;
-        print_upload_error(get_string('incorrect_vid'),'vidtrans');
+        print_upload_error(get_string('incorrect_vid','vidtrans'));
     }
 
     $file = $_FILES['vidfile'];
@@ -66,10 +66,10 @@ if (key_exists('vidfile', $_FILES)) {
             'mimetype' => $_FILES['subfile']['type']);
         $fs->create_file_from_pathname($fileinfo, $_FILES['subfile']['tmp_name']);
     } else {
-        print_upload_error(get_string('ss_sub'),'vidtrans');
+        print_upload_error(get_string('ss_sub','vidtrans'));
     }
 } else {
-     print_upload_error(get_string('ss_vid'),'vidtrans');
+     print_upload_error(get_string('ss_vid','vidtrans'));
 }
 $no_redirect = false;
 
