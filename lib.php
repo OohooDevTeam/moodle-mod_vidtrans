@@ -72,8 +72,6 @@ function vidtrans_add_instance(stdClass $vidtrans, mod_vidtrans_mod_form $mform 
 
     $vidtrans->timecreated = time();
 
-    print_object($vidtrans);
-
     $languages = new stdClass();
 
     $languages->french = property_exists($vidtrans, 'french') ? $vidtrans->french : 0;
@@ -81,7 +79,6 @@ function vidtrans_add_instance(stdClass $vidtrans, mod_vidtrans_mod_form $mform 
     $languages->russian = property_exists($vidtrans, 'russian') ? $vidtrans->russian : 0;
     $languages->japanese = property_exists($vidtrans, 'japanese') ? $vidtrans->japanese : 0;
     $languages->course = $vidtrans->course;
-    print_object($languages);
 
     $DB->insert_record('vidtrans_languages', $languages);
 
@@ -108,8 +105,6 @@ function vidtrans_update_instance(stdClass $vidtrans, mod_vidtrans_mod_form $mfo
     $vidtrans->timemodified = time();
     $vidtrans->id = $vidtrans->instance;
 
-    print_object($vidtrans);
-    die();
     return $DB->update_record('vidtrans', $vidtrans);
 }
 
