@@ -25,10 +25,10 @@
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
                 <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course vidtrans activity belongs to" PREVIOUS="id" NEXT="french"/>
-                <FIELD NAME="french" TYPE="int" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="spanish"/>
-                <FIELD NAME="spanish" TYPE="int" NOTNULL="true" SEQUENCE="false" PREVIOUS="french" NEXT="russian"/>  
-                <FIELD NAME="russian" TYPE="int" NOTNULL="true" SEQUENCE="false" PREVIOUS="spanish" NEXT="japanese"/>  
-                <FIELD NAME="japanese" TYPE="int" NOTNULL="true" SEQUENCE="false" PREVIOUS="russian"/>
+                <FIELD NAME="french" TYPE="int"  LENGTH="1" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="spanish"/>
+                <FIELD NAME="spanish" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" PREVIOUS="french" NEXT="russian"/>  
+                <FIELD NAME="russian" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" PREVIOUS="spanish" NEXT="japanese"/>  
+                <FIELD NAME="japanese" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" PREVIOUS="russian"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
