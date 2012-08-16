@@ -4,6 +4,7 @@ Translates the subtitles of a video into one of the 6 preselected languages and
 plays the video with those translated subtitles.
 
 Prerequisites: Install ffmpeg and oggz-info on the server.
+Must set the property post_max_size to your desired max video size in php.ini file.
 
 Installation: Move the contents of this folder to
  

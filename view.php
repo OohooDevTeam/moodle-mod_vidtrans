@@ -68,6 +68,8 @@ if ($vidtrans->intro) { // Conditions to show the intro can change to look for o
     echo $OUTPUT->box(format_module_intro('vidtrans', $vidtrans, $cm->id), 'generalbox mod_introbox', 'vidtransintro');
 }
 
+//For some reason I made everything in this plugin a form =/ It was a terrible idea
+//and should probably be changed later.
 $mform = new vid_form();
 $mform->display();
 
