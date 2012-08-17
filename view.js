@@ -1,10 +1,37 @@
+/**
+ * ************************************************************************
+ * *                         Video Translator                            **
+ * ************************************************************************
+ * @package     mod                                                      **
+ * @subpackage  Video Translator                                         **
+ * @name        Video Translator                                         **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Andrew McCann                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ * ************************************************************************
+ * ************************************************************************ */
+
+/**
+ * This page handles all the javascript for the main view page.
+ */
+
+
+/**
+ * This function makes subtitles show up in the side menu if video is not
+ * fullscreen and on the bottom of the video if it is.
+ */
 var sub = function() {
-    console.log(VideoJS("my_video_1"));
+    //Check if the video is full screen
     if(VideoJS("my_video_1").tag.player.isFullScreen) {        
+        //If it is then show the subtitles.
         $('.vjs-subtitles').show();
     } else {
+        //Otherwise hide them
         $('.vjs-subtitles').hide();
     }
+    
+    //Now move the subtitles to the side area.
     var i = VideoJS("my_video_1").subtitlesDisplay.el.innerHTML;
     var $_GET = getGet();
     $("#subtitlearea").load('updatevideo.php?id='+$_GET['id'], {
@@ -13,6 +40,7 @@ var sub = function() {
     return;
 }
 
+//Whenever the time updates redo the subtitles. (They need to update with time.)
 VideoJS("my_video_1").ready(function(){
     VideoJS("my_video_1").addEvent('timeupdate', sub);
 });
@@ -106,7 +134,7 @@ $('#backgroundPopup').click(function() {
 });
 
 
-
+//Load the "Add Files" popup.
 function loadPopup() {
     $('#backgroundPopup').fadeIn('slow');
     
@@ -135,6 +163,7 @@ function closePopup() {
     $('#backgroundPopup').fadeOut('slow');
 }
 
+//Gets the php $_GET variable.
 function getGet() {
     var parts = window.location.search.substr(1).split("&");
     var $_GET = {};

@@ -1,19 +1,17 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * ************************************************************************
+ * *                         Video Translator                            **
+ * ************************************************************************
+ * @package     mod                                                      **
+ * @subpackage  Video Translator                                         **
+ * @name        Video Translator                                         **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Andrew McCann                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ * ************************************************************************
+ * ************************************************************************ */
 
 /**
  * Internal library of functions for module vidtrans
@@ -31,6 +29,11 @@ define('__TRANSLIMIT__', 1000);
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
+/**
+ * Gets the browser' version's name that the user is using.
+ * 
+ * @return string The name of the browser being used.
+ */
 function getBrowser() {
     $u_agent = $_SERVER['HTTP_USER_AGENT'];
     $ub = '';
@@ -44,14 +47,26 @@ function getBrowser() {
         $ub = "Apple Safari";
     } elseif (preg_match('/Opera/i', $u_agent)) {
         $ub = "Opera";
+    }else {
+        $ub = "Apple Safari"; //Assume apple if it is unknown.
     }
     return $ub;
 }
 
+/**
+ * Translate the subtitles for the given file and upload the translation to moodle.
+ * 
+ * @param String $inFile    Path to the file that needs to be uploaded
+ * @param int $contextid    The module id that this file belongs to.
+ * @param String $filepath  The filepath field that the file needs to be uploaded to.
+ * @param String $filename  The filename that the uploaded file will have.  
+ * @param String $mimetype  The mimetype that the uploaded file will have.
+ * @param String $toLang    The language that you want to translate the file into. (Language Code)
+ * @param String $fromLang  The language the the file is currently in. Defaults to 'en'.
+ */
 function translate_and_upload($inFile, $contextid, $filepath, $filename,
         $mimetype, $toLang, $fromLang = 'en') {
-
-
+    
     $aFile = fopen($inFile, "r");
     $toBeTranslated = fread($aFile, filesize($inFile));
 
@@ -79,6 +94,19 @@ function translate_and_upload($inFile, $contextid, $filepath, $filename,
     $fs->create_file_from_string($fileinfo, $trans_caption);
 }
 
+/**
+ * Merges the original and translated subtitles into a single subtitle file 
+ * which will be in the form
+ * 
+ * [timestamp]
+ * [Original Text]
+ * ----
+ * [Translated Text]
+ * 
+ * @param String $trans_text    The translated subtitle text.
+ * @param String $original_sub  The original subtitle text.
+ * @return boolean|string       The new subtitle string. False if there was an error.
+ */
 function merge_subtitles(/* String */ $trans_text, /* String */ $original_sub) {
     $trans_array = explode("\n\n", $trans_text);
     $orig_caps = explode("\n\n", $original_sub);

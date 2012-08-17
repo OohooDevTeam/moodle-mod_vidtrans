@@ -1,7 +1,24 @@
 <?php
+/**
+ * ************************************************************************
+ * *                         Video Translator                            **
+ * ************************************************************************
+ * @package     mod                                                      **
+ * @subpackage  Video Translator                                         **
+ * @name        Video Translator                                         **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Andrew McCann                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ * ************************************************************************
+ * ************************************************************************ */
+
+//Client ID for Translate API
 $settings->add(new admin_setting_configtext('vidtrans_client_id', get_string('client_id',
                         'vidtrans'),
                 get_string('client_idhelp', 'vidtrans'), ''));
+
+//Client Secret for Translate API
 $settings->add(new admin_setting_configtext('vidtrans_client_secret', get_string('client_secret',
                         'vidtrans'),
                 get_string('client_secrethelp', 'vidtrans'), ''));

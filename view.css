@@ -1,3 +1,21 @@
+/**
+ * ************************************************************************
+ * *                         Video Translator                            **
+ * ************************************************************************
+ * @package     mod                                                      **
+ * @subpackage  Video Translator                                         **
+ * @name        Video Translator                                         **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Andrew McCann                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ * ************************************************************************
+ * ************************************************************************ */
+
+/**
+* This page handles all the css for the main view page.
+*/
+
 .file-link {
     width: 213px;
     text-align: center;

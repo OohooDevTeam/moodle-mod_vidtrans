@@ -1,4 +1,17 @@
 <?php
+/**
+ * ************************************************************************
+ * *                         Video Translator                            **
+ * ************************************************************************
+ * @package     mod                                                      **
+ * @subpackage  Video Translator                                         **
+ * @name        Video Translator                                         **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Andrew McCann                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ * ************************************************************************
+ * ************************************************************************ */
 
 /**
  * Capability definitions for the vidtrans module

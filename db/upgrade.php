@@ -1,20 +1,18 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+/**
+ * ************************************************************************
+ * *                         Video Translator                            **
+ * ************************************************************************
+ * @package     mod                                                      **
+ * @subpackage  Video Translator                                         **
+ * @name        Video Translator                                         **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Andrew McCann                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ * ************************************************************************
+ * ************************************************************************ */
 /**
  * This file keeps track of upgrades to the vidtrans module
  *
@@ -30,7 +28,6 @@
  * @copyright  2011 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -43,31 +40,25 @@ function xmldb_vidtrans_upgrade($oldversion) {
     global $DB;
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
-
     // And upgrade begins here. For each one, you'll need one
     // block of code similar to the next one. Please, delete
     // this comment lines once this file start handling proper
     // upgrade code.
-
     // if ($oldversion < YYYYMMDD00) { //New version in version.php
     //
     // }
-
     // Lines below (this included)  MUST BE DELETED once you get the first version
     // of your module ready to be installed. They are here only
     // for demonstrative purposes and to show how the vidtrans
     // iself has been upgraded.
-
     // For each upgrade block, the file vidtrans/version.php
     // needs to be updated . Such change allows Moodle to know
     // that this file has to be processed.
-
     // To know more about how to write correct DB upgrade scripts it's
     // highly recommended to read information available at:
     //   http://docs.moodle.org/en/Development:XMLDB_Documentation
     // and to play with the XMLDB Editor (in the admin menu) and its
     // PHP generation posibilities.
-
     // First example, some fields were added to install.xml on 2007/04/01
     if ($oldversion < 2007040100) {
 
@@ -82,7 +73,7 @@ function xmldb_vidtrans_upgrade($oldversion) {
 
         // Define field intro to be added to vidtrans
         $table = new xmldb_table('vidtrans');
-        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'medium', null, null, null, null,'name');
+        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'name');
 
         // Add field intro
         if (!$dbman->field_exists($table, $field)) {
@@ -92,7 +83,7 @@ function xmldb_vidtrans_upgrade($oldversion) {
         // Define field introformat to be added to vidtrans
         $table = new xmldb_table('vidtrans');
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'intro');
+                        'intro');
 
         // Add field introformat
         if (!$dbman->field_exists($table, $field)) {
@@ -112,7 +103,7 @@ function xmldb_vidtrans_upgrade($oldversion) {
         // Define field timecreated to be added to vidtrans
         $table = new xmldb_table('vidtrans');
         $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'introformat');
+                        'introformat');
 
         // Add field timecreated
         if (!$dbman->field_exists($table, $field)) {
@@ -122,7 +113,7 @@ function xmldb_vidtrans_upgrade($oldversion) {
         // Define field timemodified to be added to vidtrans
         $table = new xmldb_table('vidtrans');
         $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'timecreated');
+                        'timecreated');
 
         // Add field timemodified
         if (!$dbman->field_exists($table, $field)) {
@@ -155,11 +146,9 @@ function xmldb_vidtrans_upgrade($oldversion) {
     // it's interesting to look how other modules are using this script. Remember that
     // the basic idea is to have "blocks" of code (each one being executed only once,
     // when the module version (version.php) is updated.
-
     // Lines above (this included) MUST BE DELETED once you get the first version of
     // yout module working. Each time you need to modify something in the module (DB
     // related, you'll raise the version and add one upgrade block here.
-
     // Final return of upgrade result (true, all went good) to Moodle.
     return true;
 }
