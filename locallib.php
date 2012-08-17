@@ -28,7 +28,6 @@
  */
 defined('MOODLE_INTERNAL') || die();
 define('__TRANSLIMIT__', 1000);
-define("__APPID__", "64A554326DD403050C7CE2EFC098DA5C2C567E71");
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
@@ -49,7 +48,8 @@ function getBrowser() {
     return $ub;
 }
 
-function translate_and_upload($inFile, $contextid, $filepath, $filename, $mimetype, $toLang, $fromLang = 'en') {
+function translate_and_upload($inFile, $contextid, $filepath, $filename,
+        $mimetype, $toLang, $fromLang = 'en') {
 
 
     $aFile = fopen($inFile, "r");
@@ -58,9 +58,9 @@ function translate_and_upload($inFile, $contextid, $filepath, $filename, $mimety
     $trans_array = to_translate_array($toBeTranslated);
 
     $translated_text = "";
-
+    $authHeader = getAuthHeader();
     foreach ($trans_array as $aString) {
-        $newString = translate($aString, $fromLang, $toLang);
+        $newString = translate($aString, $fromLang, $toLang, $authHeader);
         $translated_text .= $newString;
     }
 
@@ -95,9 +95,11 @@ function merge_subtitles(/* String */ $trans_text, /* String */ $original_sub) {
         /* int */ $first = strpos($orig_caps[$i], "\n");
 
         if ($first != -1) {
-            /* int */ $index = strpos($orig_caps[$i], "\n", $first + 1 > strlen($orig_caps[$i]) ? $first : $first + 1);
+            /* int */ $index = strpos($orig_caps[$i], "\n",
+                    $first + 1 > strlen($orig_caps[$i]) ? $first : $first + 1);
             if ($index != -1) {
-                $trans_subtitles .= substr($orig_caps[$i], 0, $index + 1) . substr($orig_caps[$i], $index + 1) . "\n-----\n" . $trans_array[$i] . "\n\n";
+                $trans_subtitles .= substr($orig_caps[$i], 0, $index + 1) . substr($orig_caps[$i],
+                                $index + 1) . "\n-----\n" . $trans_array[$i] . "\n\n";
             }
         }
     }
@@ -105,26 +107,64 @@ function merge_subtitles(/* String */ $trans_text, /* String */ $original_sub) {
     return $trans_subtitles;
 }
 
-function translate(/* String */ $aString, /* String */ $from, /* String */ $to) {
+function getAuthHeader() {
+    global $CFG;
+    try {
 
-    //Bing likes to ignore newlines sometimes. =/ 
-    $aString = str_replace("\n", "<br>", $aString);
+        //Client ID of the application .
+        $clientID = $CFG->vidtrans_client_id;
+        print_object($CFG->vidtrans_client_id);
+        //Client Secret key of the application.
+        $clientSecret = $CFG->vidtrans_client_secret;
+        print_object($CFG->vidtrans_client_secret);
+        //OAuth Url.
+        $authUrl = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13/";
+        //Application Scope Url
+        $scopeUrl = "http://api.microsofttranslator.com";
 
-    $url = "http://api.bing.net/json.aspx?AppId=" . __APPID__ . "&Sources=Translation&Version=2.2&Translation.SourceLanguage=$from&Translation.TargetLanguage=$to&Query=" . urlencode($aString);
+        //Application grant type
+        $grantType = "client_credentials";
 
-    //Get translation
-    $curl_handle = curl_init($url);
-    curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl_handle, CURLOPT_USERAGENT, "Mozilla/4.0");
+        //Create the AccessTokenAuthentication object.
+        $authObj = new AccessTokenAuthentication();
+        //Get the Access token.
 
-    $jsonArray = json_decode(curl_exec($curl_handle));
+        $accessToken = $authObj->getTokens($grantType, $scopeUrl, $clientID,
+                $clientSecret, $authUrl);
+        //Create the authorization Header string.
+        return "Authorization: Bearer " . $accessToken;
+    } catch (Exception $e) {
+        echo "Exception: " . $e->getMessage() . PHP_EOL;
+    }
+}
 
-    /* String */ $contents = $jsonArray->SearchResponse->Translation->Results[0]->TranslatedTerm;
+function translate(/* String */ $aString, /* String */ $from, /* String */ $to,
+        $authHeader) {
+    try {
+        //Set the params.//
+        $fromLanguage = $from;
+        $toLanguage = $to;
+        $inputStr = "the best machine translation \ntechnology cannot always provide translations tailored to a site or users like a human";
+        $inputStr2 = str_replace("\n", "<br>", $aString);
+        $params = "text=" . urlencode($inputStr2) . "&to=" . $toLanguage . "&from=" . $fromLanguage;
+        $translateUrl = "http://api.microsofttranslator.com/v2/Http.svc/Translate?$params";
 
-    //Close connection.
-    curl_close($curl_handle);
+        //Create the Translator Object.
+        $translatorObj = new HTTPTranslator();
 
-    return str_replace("<br>", "\n", $contents);
+        //Get the curlResponse.
+        $curlResponse = $translatorObj->curlRequest($translateUrl, $authHeader);
+
+        //Interprets a string of XML into an object.
+        $xmlObj = simplexml_load_string($curlResponse);
+        foreach ((array) $xmlObj[0] as $val) {
+            $translatedStr = $val;
+        }
+
+        return str_replace("<br>", "\n", $translatedStr);
+    } catch (Exception $e) {
+        echo "Exception: " . $e->getMessage() . PHP_EOL;
+    }
 }
 
 function to_translate_array($sub) {
@@ -141,7 +181,8 @@ function to_translate_array($sub) {
     for (/* int */ $i = 0; $i < count($capArray); $i++) {
 
         //Seperate the first component. <NUM> from the rest
-        /* String[] */ $seperated = substr($capArray[$i], strpos($capArray[$i], "\n") + 1);
+        /* String[] */ $seperated = substr($capArray[$i],
+                strpos($capArray[$i], "\n") + 1);
 
         //Now we remove <TIMECODE>
         $seperated = substr($seperated, strpos($seperated, "\n") + 1);
@@ -162,3 +203,118 @@ function to_translate_array($sub) {
     return $outArray;
 }
 
+class AccessTokenAuthentication {
+    /*
+     * Get the access token.
+     *
+     * @param string $grantType    Grant type.
+     * @param string $scopeUrl     Application Scope URL.
+     * @param string $clientID     Application client ID.
+     * @param string $clientSecret Application client ID.
+     * @param string $authUrl      Oauth Url.
+     *
+     * @return string.
+     */
+
+    function getTokens($grantType, $scopeUrl, $clientID, $clientSecret, $authUrl) {
+        try {
+            //Initialize the Curl Session.
+            $ch = curl_init();
+            //Create the request Array.
+            $paramArr = array(
+                'grant_type' => $grantType,
+                'scope' => $scopeUrl,
+                'client_id' => $clientID,
+                'client_secret' => $clientSecret
+            );
+            //Create an Http Query.//
+            $paramStr = "grant_type=" . urlencode($grantType);
+            $paramStr .= "&scope=" . urlencode($scopeUrl);
+            $paramStr .= "&client_id=" . urlencode($clientID);
+            $paramStr .= "&client_secret=" . urlencode($clientSecret);
+
+
+
+            //Set the Curl URL.
+            curl_setopt($ch, CURLOPT_URL, $authUrl);
+
+            //Set HTTP POST Request.
+            curl_setopt($ch, CURLOPT_POST, TRUE);
+
+            //Set data to POST in HTTP "POST" Operation.
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $paramStr);
+
+            //CURLOPT_RETURNTRANSFER- TRUE to return the transfer as a string of the return value of curl_exec().
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+
+            //CURLOPT_SSL_VERIFYPEER- Set FALSE to stop cURL from verifying the peer's certificate.
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+            //Execute the  cURL session.
+            $strResponse = curl_exec($ch);
+
+            //Get the Error Code returned by Curl.
+            $curlErrno = curl_errno($ch);
+            if ($curlErrno) {
+                $curlError = curl_error($ch);
+                throw new Exception($curlError);
+            }
+            //Close the Curl Session.
+            curl_close($ch);
+            //Decode the returned JSON string.
+            $objResponse = json_decode($strResponse);
+            if (isset($objResponse->error) && $objResponse->error) {
+                throw new Exception($objResponse->error_description);
+            }
+            return $objResponse->access_token;
+        } catch (Exception $e) {
+            echo "Exception-" . $e->getMessage();
+        }
+    }
+
+}
+
+/*
+ * Class:HTTPTranslator
+ *
+ * Processing the translator request.
+ */
+
+Class HTTPTranslator {
+    /*
+     * Create and execute the HTTP CURL request.
+     *
+     * @param string $url        HTTP Url.
+     * @param string $authHeader Authorization Header string.
+     * @param string $postData   Data to post.
+     *
+     * @return string.
+     *
+     */
+
+    function curlRequest($url, $authHeader) {
+        //Initialize the Curl Session.
+        $ch = curl_init();
+        //Set the Curl url.
+        curl_setopt($ch, CURLOPT_URL, $url);
+        //Set the HTTP HEADER Fields.
+        curl_setopt($ch, CURLOPT_HTTPHEADER,
+                array($authHeader, "Content-Type: text/xml"));
+        //CURLOPT_RETURNTRANSFER- TRUE to return the transfer as a string of the return value of curl_exec().
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        //CURLOPT_SSL_VERIFYPEER- Set FALSE to stop cURL from verifying the peer's certificate.
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, False);
+        //Execute the  cURL session.
+        $curlResponse = curl_exec($ch);
+        //Get the Error Code returned by Curl.
+        $curlErrno = curl_errno($ch);
+        if ($curlErrno) {
+            $curlError = curl_error($ch);
+            throw new Exception($curlError);
+        }
+        //Close a cURL session.
+        curl_close($ch);
+        return $curlResponse;
+    }
+
+}

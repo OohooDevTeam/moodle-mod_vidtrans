@@ -5,6 +5,7 @@ plays the video with those translated subtitles.
 
 Prerequisites: Install ffmpeg and oggz-info on the server.
 Must set the property post_max_size to your desired max video size in php.ini file.
+Must Sign up for Microsoft Translator. Instructions can be found here: http://www.netnavi.tv/2012/04/22/getting-started-with-microsoft-translator-in-the-azure-data-market/
 
 Installation: Move the contents of this folder to
  
